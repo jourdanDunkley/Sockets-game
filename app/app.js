@@ -1,30 +1,34 @@
-
-const socket = io('ws://localhost:8080');
+let socket;
+socket = io('ws://localhost:8080');
 
 socket.on('message', text => {
 
-    const el = document.createElement('li');
-    el.innerHTML = text;
-    document.querySelector('ul').appendChild(el)
-
+    if(text.points){
+        document.getElementById('dealerScore').innerText = text.dealerPoints
+        document.getElementById('spotterScore').innerText = text.spotterPoints
+        document.getElementById('round').innerText = text.round
+        if(text.round==5){
+            if(text.dealerPoints<text.spotterPoints){
+                document.getElementById('message').innerText = "GAME OVER! Spotter Wins"
+                document.getElementById('game-title').innerText = "Thanks for playing"
+            } else {
+                document.getElementById('message').innerText = "GAME OVER! Dealer Wins"
+                document.getElementById('game-title').innerText = "Thanks for playing"
+            }
+        }
+    } else {
+        document.getElementById('message').innerText = text
+    }
 });
 
-document.querySelector('button').onclick = () => {
-
-    const text = document.querySelector('input').value;
-    socket.emit('message', text)
-    
+document.getElementById('1').onclick = () => {
+    socket.emit('message', '1');
+}
+document.getElementById('2').onclick = () => {
+    socket.emit('message', '2');
+}
+document.getElementById('3').onclick = () => {
+    socket.emit('message', '3');
 }
 
-// Regular Websockets
 
-// const socket = new WebSocket('ws://localhost:8080');
-
-// // Listen for messages
-// socket.onmessage = ({ data }) => {
-//     console.log('Message from server ', data);
-// };
-
-// document.querySelector('button').onclick = () => {
-//     socket.send('hello');
-// }
